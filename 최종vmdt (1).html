@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PLASTICPRODUCT</title>
+<style>
+  :root { --silver:#d0d0d8; --silver-light:#f0f0f5; --black:#0a0a0a; --dark:#111111; --gray:#1e1e1e; --light-gray:#2a2a2a; --white:#f5f5f5; --text-muted:#888; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--black); color:var(--white); font-family:'Helvetica Neue',Arial,sans-serif; overflow-x:hidden; }
+  ::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-track { background:var(--black); } ::-webkit-scrollbar-thumb { background:var(--silver); border-radius:2px; }
+
+  /* NAV */
+  nav { position:fixed; top:0; width:100%; z-index:1000; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(to bottom,rgba(0,0,0,0.9),transparent); transition:background .3s; }
+  nav.scrolled { background:rgba(10,10,10,0.97); border-bottom:1px solid rgba(208,208,216,0.2); }
+  .nav-logo { font-size:.9rem; font-weight:700; letter-spacing:.25em; color:var(--silver); text-decoration:none; }
+  .nav-links { display:flex; gap:24px; list-style:none; }
+  .nav-links a { color:var(--text-muted); text-decoration:none; font-size:.7rem; letter-spacing:.15em; text-transform:uppercase; transition:color .3s; }
+  .nav-links a:hover { color:var(--silver); }
+  .admin-btn { background:transparent; border:1px solid var(--silver); color:var(--silver); padding:7px 14px; font-size:.65rem; letter-spacing:.15em; cursor:pointer; transition:all .3s; text-transform:uppercase; white-space:nowrap; }
+  .admin-btn:hover { background:var(--silver); color:var(--black); }
+  @media(max-width:600px) { nav { padding:14px 16px; } .nav-links { display:none; } }
+
+  /* HERO */
+  #hero { height:100svh; min-height:500px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; position:relative; overflow:hidden; padding:0 24px; background:radial-gradient(ellipse at center,#141418 0%,var(--black) 70%); }
+  .hero-bg-lines { position:absolute; inset:0; overflow:hidden; opacity:.15; }
+  .hero-bg-lines::before,.hero-bg-lines::after { content:''; position:absolute; border:1px solid var(--silver); border-radius:50%; }
+  .hero-bg-lines::before { width:min(600px,90vw); height:min(600px,90vw); top:50%; left:50%; transform:translate(-50%,-50%); animation:pulseRing 4s ease-in-out infinite; }
+  .hero-bg-lines::after { width:min(900px,130vw); height:min(900px,130vw); top:50%; left:50%; transform:translate(-50%,-50%); animation:pulseRing 4s ease-in-out infinite 1s; }
+  @keyframes pulseRing { 0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(1)} 50%{opacity:.6;transform:translate(-50%,-50%) scale(1.05)} }
+  .hero-tag { font-size:.7rem; letter-spacing:.4em; color:var(--silver); text-transform:uppercase; margin-bottom:20px; opacity:0; animation:fadeUp 1s .3s forwards; }
+  .hero-title { font-size:clamp(3rem,14vw,9rem); font-weight:900; letter-spacing:-0.02em; line-height:.9; background:linear-gradient(135deg,#fff 0%,#c8c8d8 50%,#fff 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; opacity:0; animation:fadeUp 1s .6s forwards; }
+  .hero-sub { margin-top:24px; font-size:.85rem; letter-spacing:.35em; color:var(--text-muted); text-transform:uppercase; opacity:0; animation:fadeUp 1s .9s forwards; }
+  .hero-line { width:1px; height:60px; background:linear-gradient(to bottom,var(--silver),transparent); margin:40px auto 0; opacity:0; animation:fadeUp 1s 1.2s forwards; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SECTION */
+  section { padding:80px 24px; }
+  @media(min-width:768px) { section { padding:100px 60px; } }
+  .section-label { font-size:.6rem; letter-spacing:.45em; color:var(--silver); text-transform:uppercase; margin-bottom:14px; }
+  .section-title { font-size:clamp(1.8rem,5vw,3.5rem); font-weight:800; letter-spacing:-0.02em; line-height:1.1; margin-bottom:40px; }
+
+  /* ABOUT */
+  #about { background:var(--dark); }
+  .about-grid { display:grid; grid-template-columns:1fr; gap:48px; max-width:1200px; margin:0 auto; }
+  @media(min-width:768px) { .about-grid { grid-template-columns:1fr 1fr; gap:80px; align-items:start; } }
+  .about-text p { color:var(--text-muted); line-height:1.9; font-size:.9rem; margin-bottom:16px; }
+  .about-stats { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .stat-box { border:1px solid rgba(208,208,216,0.2); padding:20px; transition:all .4s; position:relative; overflow:hidden; }
+  @media(min-width:768px) { .stat-box { padding:28px; } }
+  .stat-box::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(208,208,216,0.05),transparent); opacity:0; transition:opacity .4s; }
+  .stat-box:hover { border-color:var(--silver); transform:translateY(-4px); }
+  .stat-box:hover::before { opacity:1; }
+  .stat-num { font-size:clamp(1.6rem,4vw,2.5rem); font-weight:900; color:var(--silver); display:block; }
+  .stat-label { font-size:.62rem; letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase; margin-top:6px; }
+
+  /* EDITABLE */
+  [contenteditable="true"] { outline:none; cursor:text; }
+  [contenteditable="true"]:focus { outline:1px dashed rgba(208,208,216,0.4); outline-offset:4px; }
+  .admin-active [contenteditable="true"]:hover { outline:1px dashed rgba(208,208,216,0.25); outline-offset:4px; }
+  .edit-hint { display:none; font-size:.58rem; letter-spacing:.2em; color:var(--silver); opacity:.5; text-transform:uppercase; margin-bottom:12px; }
+  .admin-active .edit-hint { display:block; }
+
+  /* TIMELINE */
+  #timeline { background:var(--black); }
+  .timeline-header { max-width:1200px; margin:0 auto 48px; }
+  .tl-collapse-wrap { position:relative; max-width:1200px; margin:0 auto; }
+  .timeline-container { position:relative; transition:max-height .6s ease; }
+  .timeline-container.collapsed { max-height:720px; overflow:hidden; }
+  .tl-fade-overlay { position:absolute; bottom:0; left:0; right:0; height:200px; background:linear-gradient(to bottom,transparent,var(--black)); pointer-events:none; opacity:0; transition:opacity .4s; }
+  .tl-fade-overlay.show { opacity:1; }
+
+  @media(min-width:768px) {
+    .timeline-line { position:absolute; left:50%; top:0; bottom:0; width:1px; background:linear-gradient(to bottom,transparent,var(--silver),transparent); transform:translateX(-50%); }
+    .timeline-item { display:grid; grid-template-columns:1fr 60px 1fr; margin-bottom:100px; align-items:start; position:relative; }
+    .timeline-item:nth-child(odd) .tl-content { grid-column:1; grid-row:1; }
+    .timeline-item:nth-child(odd) .tl-media-col { grid-column:3; grid-row:1; }
+    .timeline-item:nth-child(even) .tl-content { grid-column:3; grid-row:1; }
+    .timeline-item:nth-child(even) .tl-media-col { grid-column:1; grid-row:1; }
+    .tl-dot-col { grid-column:2; display:flex; justify-content:center; padding-top:20px; }
+    .tl-content { padding:0 40px; }
+    .tl-media-col { padding:0 40px; }
+  }
+  @media(max-width:767px) {
+    .timeline-line { display:none; }
+    .timeline-item { display:block; margin-bottom:48px; position:relative; border-left:2px solid rgba(208,208,216,0.2); padding-left:20px; }
+    .tl-dot-col { display:none; }
+    .tl-content { padding:0; margin-bottom:16px; }
+    .tl-media-col { padding:0; }
+    .timeline-item::before { content:''; position:absolute; left:-6px; top:4px; width:10px; height:10px; border-radius:50%; background:var(--black); border:2px solid var(--silver); }
+  }
+  .tl-dot { width:16px; height:16px; border-radius:50%; background:var(--black); border:2px solid var(--silver); position:relative; transition:all .3s; flex-shrink:0; }
+  .tl-dot::before { content:''; position:absolute; inset:-6px; border-radius:50%; border:1px solid rgba(208,208,216,0.3); }
+  .timeline-item:hover .tl-dot { background:var(--silver); box-shadow:0 0 20px rgba(208,208,216,0.4); }
+  .tl-date { font-size:.62rem; letter-spacing:.3em; color:var(--silver); text-transform:uppercase; margin-bottom:10px; }
+  .tl-title { font-size:clamp(1.05rem,2.5vw,1.3rem); font-weight:700; margin-bottom:10px; }
+  .tl-desc { font-size:.82rem; color:var(--text-muted); line-height:1.8; }
+  .timeline-item { opacity:0; transform:translateY(40px); transition:opacity .7s,transform .7s; }
+  .timeline-item.visible { opacity:1; transform:translateY(0); }
+
+  /* ALBUM STACK */
+  .album-stack { position:relative; width:100%; aspect-ratio:4/3; margin-bottom:12px; }
+  .album-stack.empty { aspect-ratio:16/9; border:1px dashed rgba(208,208,216,0.25); background:var(--gray); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); }
+  .album-stack.empty .stack-icon { font-size:1.8rem; opacity:.35; }
+  .album-stack.empty .stack-hint { font-size:.7rem; opacity:.4; letter-spacing:.1em; }
+  .stack-card { position:absolute; width:88%; aspect-ratio:4/3; background:var(--gray); border:1px solid rgba(208,208,216,0.15); overflow:hidden; cursor:pointer; transition:transform .3s,box-shadow .3s; left:50%; transform-origin:center bottom; }
+  .stack-card img,.stack-card video { width:100%; height:100%; object-fit:cover; display:block; }
+  .stack-card iframe { width:100%; height:100%; border:none; pointer-events:none; }
+  .stack-card .pdf-thumb { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; }
+  .stack-card .pdf-thumb span:first-child { font-size:2rem; }
+  .stack-card .pdf-thumb span:last-child { font-size:.65rem; letter-spacing:.1em; color:#aaa; }
+  .stack-card:nth-child(1) { transform:translateX(-50%) translate(-8px,8px); z-index:1; bottom:0; }
+  .stack-card:nth-child(2) { transform:translateX(-50%) translate(-4px,4px); z-index:2; bottom:0; }
+  .stack-card:nth-child(3) { transform:translateX(-50%) translate(0px,0px);  z-index:3; bottom:0; }
+  .stack-card:nth-child(4) { transform:translateX(-50%) translate(4px,-4px); z-index:4; bottom:0; }
+  .stack-card:nth-child(5) { transform:translateX(-50%) translate(8px,-8px); z-index:5; bottom:0; }
+  .album-stack:hover .stack-card:nth-child(1) { transform:translateX(-50%) translate(-28px,0); }
+  .album-stack:hover .stack-card:nth-child(2) { transform:translateX(-50%) translate(-14px,0); }
+  .album-stack:hover .stack-card:nth-child(3) { transform:translateX(-50%) translate(0px,0); }
+  .album-stack:hover .stack-card:nth-child(4) { transform:translateX(-50%) translate(14px,0); }
+  .album-stack:hover .stack-card:nth-child(5) { transform:translateX(-50%) translate(28px,0); }
+  .album-stack:hover .stack-card { box-shadow:0 8px 24px rgba(0,0,0,0.5); }
+  .stack-count-badge { position:absolute; top:4px; right:4px; z-index:10; background:rgba(0,0,0,0.75); color:var(--silver); font-size:.6rem; letter-spacing:.1em; padding:3px 8px; pointer-events:none; }
+  .album-add-btn { display:none; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:8px; padding:9px; background:transparent; border:1px dashed rgba(208,208,216,0.3); color:var(--text-muted); font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:all .3s; }
+  .album-add-btn:hover { border-color:var(--silver); color:var(--silver); }
+  .admin-active .album-add-btn { display:flex; }
+  .album-del-btn { display:none; position:absolute; top:4px; left:4px; z-index:20; background:rgba(180,40,40,0.85); border:none; color:#fff; width:22px; height:22px; font-size:.8rem; cursor:pointer; align-items:center; justify-content:center; }
+  .admin-active .album-del-btn { display:flex; }
+
+  /* TL CONTROLS */
+  .tl-item-controls { display:none; position:absolute; top:0; right:0; gap:6px; z-index:10; }
+  .admin-active .tl-item-controls { display:flex; }
+  .tl-ctrl-btn { background:rgba(20,20,20,0.9); border:1px solid rgba(208,208,216,0.3); color:var(--silver); width:32px; height:32px; cursor:pointer; font-size:.85rem; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+  .tl-ctrl-btn:hover { background:var(--silver); color:var(--black); }
+  .tl-ctrl-btn.del:hover { background:#c03030; border-color:#c03030; color:#fff; }
+
+  /* MORE BTN */
+  .tl-actions { max-width:1200px; margin:24px auto 0; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .tl-more-btn { background:transparent; border:1px solid rgba(208,208,216,0.5); color:var(--silver); padding:13px 44px; font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; cursor:pointer; transition:all .3s; }
+  .tl-more-btn:hover { background:rgba(208,208,216,0.1); border-color:var(--silver); }
+  .add-tl-btn { display:none; background:transparent; border:1px solid rgba(208,208,216,0.4); color:var(--silver); padding:14px 40px; font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; cursor:pointer; transition:all .3s; }
+  .add-tl-btn:hover { background:rgba(208,208,216,0.1); border-color:var(--silver); }
+  .admin-active .add-tl-btn { display:inline-block; }
+
+  /* LIGHTBOX */
+  .lightbox { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:3000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+  .lightbox.open { opacity:1; pointer-events:all; }
+  .lb-inner { position:relative; max-width:90vw; max-height:90svh; display:flex; align-items:center; justify-content:center; }
+  .lb-inner img { max-width:90vw; max-height:85svh; object-fit:contain; }
+  .lb-inner video { max-width:90vw; max-height:85svh; }
+  .lb-inner iframe { width:80vw; height:45vw; max-height:80svh; border:none; }
+  .lb-pdf { display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .lb-pdf span { font-size:4rem; }
+  .lb-pdf a { color:var(--silver); border:1px solid var(--silver); padding:12px 32px; text-decoration:none; font-size:.75rem; letter-spacing:.3em; text-transform:uppercase; }
+  .lb-close { position:absolute; top:20px; right:24px; background:none; border:none; color:var(--white); font-size:2rem; cursor:pointer; z-index:10; line-height:1; }
+  .lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; width:44px; height:44px; cursor:pointer; font-size:1.2rem; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+  .lb-nav:hover { background:rgba(255,255,255,0.18); }
+  .lb-prev { left:-54px; } .lb-next { right:-54px; }
+  @media(max-width:600px) { .lb-prev { left:4px; } .lb-next { right:4px; } }
+  .lb-counter { position:absolute; bottom:-32px; left:50%; transform:translateX(-50%); font-size:.65rem; letter-spacing:.2em; color:var(--text-muted); white-space:nowrap; }
+
+  /* TEAM */
+  #team { background:var(--dark); }
+  .team-header { max-width:1200px; margin:0 auto 48px; }
+  .team-grid { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(2,1fr); gap:2px; }
+  @media(min-width:600px) { .team-grid { grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); } }
+  .team-card { background:var(--gray); padding:32px 24px; transition:all .4s; position:relative; overflow:hidden; opacity:0; transform:translateY(30px); }
+  @media(min-width:768px) { .team-card { padding:48px 32px; } }
+  .team-card.visible { opacity:1; transform:translateY(0); }
+  .team-card::before { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--silver); transform:scaleX(0); transition:transform .4s; }
+  .team-card:hover::before { transform:scaleX(1); }
+  .team-card:hover { transform:translateY(-6px) !important; background:var(--light-gray); }
+  .team-avatar { width:64px; height:64px; border-radius:50%; background:var(--light-gray); border:2px solid rgba(208,208,216,0.3); display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:20px; }
+  .team-name { font-size:clamp(.95rem,2vw,1.1rem); font-weight:700; margin-bottom:6px; }
+  .team-role { font-size:.65rem; letter-spacing:.2em; color:var(--silver); text-transform:uppercase; }
+  .team-review { margin-top:16px; padding-top:16px; border-top:1px solid rgba(208,208,216,0.1); font-size:.78rem; color:var(--text-muted); line-height:1.7; font-style:italic; min-height:22px; }
+  .admin-active .team-review { cursor:text; }
+  .admin-active .team-review:hover { outline:1px dashed rgba(208,208,216,0.25); outline-offset:4px; }
+  .team-add-card { background:transparent; border:1px dashed rgba(208,208,216,0.3); padding:32px 24px; display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; cursor:pointer; transition:all .3s; min-height:160px; }
+  .team-add-card:hover { border-color:var(--silver); background:rgba(208,208,216,0.05); }
+  .team-add-card .plus { font-size:2rem; color:var(--silver); opacity:.6; }
+  .team-add-card span { font-size:.65rem; letter-spacing:.3em; color:var(--text-muted); text-transform:uppercase; }
+  .admin-active .team-add-card { display:flex; }
+  .delete-btn { position:absolute; top:10px; right:10px; background:rgba(180,40,40,0.85); border:none; color:#fff; width:28px; height:28px; cursor:pointer; font-size:1rem; display:none; align-items:center; justify-content:center; }
+  .admin-active .delete-btn { display:flex; }
+
+  /* FOOTER */
+  footer { background:var(--black); border-top:1px solid rgba(208,208,216,0.15); padding:48px 24px; text-align:center; }
+  .footer-logo { font-size:1.3rem; font-weight:900; letter-spacing:.4em; color:var(--silver); margin-bottom:14px; }
+  .footer-sub { font-size:.65rem; letter-spacing:.25em; color:var(--text-muted); text-transform:uppercase; }
+
+  /* MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:2000; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+  @media(min-width:600px) { .modal-overlay { align-items:center; } }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal { background:var(--dark); border:1px solid rgba(208,208,216,0.3); padding:32px 24px; width:100%; max-width:520px; transform:translateY(40px); transition:transform .3s; max-height:92svh; overflow-y:auto; border-radius:12px 12px 0 0; }
+  @media(min-width:600px) { .modal { padding:48px; border-radius:0; transform:translateY(20px); } }
+  .modal-overlay.open .modal { transform:translateY(0); }
+  .modal h2 { font-size:1rem; letter-spacing:.2em; text-transform:uppercase; margin-bottom:28px; color:var(--silver); }
+  .modal label { display:block; font-size:.6rem; letter-spacing:.3em; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; margin-top:18px; }
+  .modal input[type="text"],.modal input[type="password"],.modal textarea,.modal select { width:100%; background:var(--gray); border:1px solid rgba(208,208,216,0.2); color:var(--white); padding:12px 14px; font-size:.9rem; outline:none; transition:border-color .3s; font-family:inherit; border-radius:2px; -webkit-appearance:none; }
+  .modal input:focus,.modal textarea:focus,.modal select:focus { border-color:var(--silver); }
+  .modal textarea { resize:vertical; min-height:80px; }
+  .modal-actions { display:flex; gap:10px; margin-top:28px; }
+  .btn-primary { flex:1; background:var(--silver); color:var(--black); border:none; padding:14px; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; font-weight:700; transition:all .3s; border-radius:2px; }
+  .btn-primary:hover { background:var(--silver-light); }
+  .btn-secondary { flex:1; background:transparent; color:var(--text-muted); border:1px solid rgba(255,255,255,0.1); padding:14px; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:all .3s; border-radius:2px; }
+  .btn-secondary:hover { color:var(--white); border-color:rgba(255,255,255,0.3); }
+  .error-msg { color:#e05050; font-size:.75rem; margin-top:8px; }
+  .file-drop-zone { width:100%; border:1px dashed rgba(208,208,216,0.3); padding:24px 16px; text-align:center; cursor:pointer; transition:all .3s; margin-top:8px; background:var(--gray); border-radius:2px; }
+  .file-drop-zone:hover { border-color:var(--silver); }
+  .file-drop-zone .drop-icon { font-size:1.6rem; margin-bottom:6px; }
+  .file-drop-zone .drop-text { font-size:.75rem; color:var(--text-muted); }
+  .file-drop-zone .drop-hint { font-size:.6rem; color:var(--text-muted); opacity:.5; margin-top:4px; }
+  .file-preview { display:none; align-items:center; gap:10px; padding:10px 14px; background:rgba(208,208,216,0.07); border:1px solid rgba(208,208,216,0.2); margin-top:8px; }
+  .file-preview.show { display:flex; }
+  .file-preview .file-name { font-size:.78rem; color:var(--white); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .file-preview .file-remove { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.1rem; padding:2px 6px; }
+
+  /* ADMIN BAR */
+  .admin-mode-bar { position:fixed; bottom:0; left:0; right:0; z-index:999; background:var(--silver); color:var(--black); padding:10px 16px; text-align:center; font-size:.65rem; letter-spacing:.25em; text-transform:uppercase; font-weight:700; display:none; }
+  .admin-mode-bar.show { display:block; }
+  .admin-mode-bar span { cursor:pointer; text-decoration:underline; }
+
+  .cursor-glow { position:fixed; pointer-events:none; z-index:9999; width:300px; height:300px; border-radius:50%; background:radial-gradient(circle,rgba(208,208,216,0.05) 0%,transparent 70%); transform:translate(-50%,-50%); transition:left .1s,top .1s; }
+  @media(max-width:768px) { .cursor-glow { display:none; } }
+  .reveal { opacity:0; transform:translateY(40px); transition:opacity .8s,transform .8s; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<nav id="mainNav">
+  <a href="#" class="nav-logo">PLASTICPRODUCT</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#timeline">Process</a></li>
+    <li><a href="#team">Team</a></li>
+  </ul>
+  <button class="admin-btn" id="adminBtnEl" onclick="openAdminModal()">Admin</button>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg-lines"></div>
+  <div class="hero-tag">VMD Project · Exhibition Design</div>
+  <h1 class="hero-title">PLASTIC<br>PRODUCT</h1>
+  <p class="hero-sub">전시형 VMD 제작 프로젝트</p>
+  <div class="hero-line"></div>
+</section>
+
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <div class="section-label">About the Project</div>
+      <h2 class="section-title">전시형<br>VMD 제작</h2>
+      <div class="edit-hint">✏️ 클릭하여 텍스트 수정</div>
+      <p contenteditable="false" id="about-p1">PLASTICPRODUCT는 Visual Merchandising Display의 가능성을 탐구하는 팀 프로젝트입니다. 공간과 오브제, 시각적 언어를 통해 브랜드의 메시지를 전달하는 전시형 VMD를 직접 기획하고 제작했습니다.</p>
+      <p contenteditable="false" id="about-p2" style="margin-top:14px">기획 단계부터 최종 설치까지, 팀원들의 협업을 통해 완성된 본 프로젝트의 전 과정을 담았습니다.</p>
+    </div>
+    <div class="about-stats reveal">
+      <div class="stat-box"><span class="stat-num" contenteditable="false" id="stat-1-num">01</span><span class="stat-label" contenteditable="false" id="stat-1-label">Single Project</span></div>
+      <div class="stat-box"><span class="stat-num" contenteditable="false" id="stat-2-num">04</span><span class="stat-label" contenteditable="false" id="stat-2-label">Team Members</span></div>
+      <div class="stat-box"><span class="stat-num" contenteditable="false" id="stat-3-num">VMD</span><span class="stat-label" contenteditable="false" id="stat-3-label">Exhibition Design</span></div>
+      <div class="stat-box"><span class="stat-num" contenteditable="false" id="stat-4-num">2026</span><span class="stat-label" contenteditable="false" id="stat-4-label">Project Year</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="timeline-header">
+    <div class="section-label reveal">Work Process</div>
+    <h2 class="section-title reveal">프로젝트<br>타임라인</h2>
+  </div>
+  <div class="tl-collapse-wrap">
+    <div class="timeline-container" id="timelineContainer">
+      <div class="timeline-line"></div>
+    </div>
+    <div class="tl-fade-overlay" id="tlFade"></div>
+  </div>
+  <div class="tl-actions">
+    <button class="tl-more-btn" id="tlMoreBtn" style="display:none" onclick="toggleTl()">더 보기 ↓</button>
+    <button class="add-tl-btn" onclick="openAddTimeline()">+ 타임라인 추가</button>
+  </div>
+</section>
+
+<section id="team">
+  <div class="team-header">
+    <div class="section-label reveal">Our Team</div>
+    <h2 class="section-title reveal">팀원 소개</h2>
+  </div>
+  <div class="team-grid" id="teamGrid">
+    <div class="team-add-card" onclick="openAddMember()">
+      <div class="plus">+</div><span>팀원 추가</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">PLASTICPRODUCT</div>
+  <div class="footer-sub" style="margin-top:10px">VMD · Exhibition Design · Team Project</div>
+  <div class="footer-sub" style="margin-top:6px;font-size:.58rem;">© 2026 PLASTICPRODUCT Team</div>
+</footer>
+
+<div class="admin-mode-bar" id="adminBar">
+  ⚡ 관리자 모드 — 텍스트 클릭 수정 &nbsp;|&nbsp;
+  <span onclick="saveAll()">저장</span> &nbsp;|&nbsp;
+  <span onclick="logoutAdmin()">로그아웃</span>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">×</button>
+  <div class="lb-inner" id="lbInner"></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <h2>관리자 로그인</h2>
+    <label>비밀번호</label>
+    <input type="password" id="adminPwInput" placeholder="비밀번호를 입력하세요" onkeydown="if(event.key==='Enter')checkAdmin()">
+    <div id="adminError" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="checkAdmin()">로그인</button>
+      <button class="btn-secondary" onclick="closeModal('adminModal')">취소</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <h2>팀원 추가</h2>
+    <label>이름</label><input type="text" id="memberName" placeholder="이름을 입력하세요">
+    <label>역할</label><input type="text" id="memberRole" placeholder="예: 팀장 / 기획">
+    <label>이모지 아바타 (선택)</label><input type="text" id="memberEmoji" placeholder="예: 🎨 👩‍🎨 🛠️">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="addMember()">추가</button>
+      <button class="btn-secondary" onclick="closeModal('memberModal')">취소</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="timelineModal">
+  <div class="modal">
+    <h2 id="tlModalTitle">타임라인 추가</h2>
+    <label>단계 라벨</label><input type="text" id="tlDate" placeholder="Step 05">
+    <label>제목</label><input type="text" id="tlTitle" placeholder="작업 제목">
+    <label>설명</label><textarea id="tlDesc" placeholder="이 단계에 대한 설명을 입력하세요"></textarea>
+    <div class="modal-actions">
+      <button class="btn-primary" id="tlSaveBtn" onclick="saveTimeline()">추가</button>
+      <button class="btn-secondary" onclick="closeModal('timelineModal')">취소</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="mediaModal">
+  <div class="modal">
+    <h2>미디어 추가</h2>
+    <label>미디어 종류</label>
+    <select id="mediaType" onchange="toggleMediaInput()">
+      <option value="image">이미지 URL</option>
+      <option value="video">YouTube / 영상 URL</option>
+      <option value="file">파일 업로드 (이미지 / PDF)</option>
+    </select>
+    <div id="mediaUrlGroup">
+      <label>URL 입력</label>
+      <input type="text" id="mediaUrl" placeholder="https://...">
+    </div>
+    <div id="mediaFileGroup" style="display:none">
+      <label>파일 선택</label>
+      <input type="file" id="mediaFileInput" accept="image/*,.pdf" style="display:none" onchange="handleFileSelect(this)">
+      <div class="file-drop-zone" onclick="document.getElementById('mediaFileInput').click()">
+        <div class="drop-icon">📂</div>
+        <div class="drop-text">클릭하여 파일 선택</div>
+        <div class="drop-hint">이미지 (JPG, PNG) 또는 PDF</div>
+      </div>
+      <div class="file-preview" id="filePreview">
+        <span class="file-name" id="filePreviewName"></span>
+        <button class="file-remove" onclick="clearFile()">×</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="applyMedia()">적용</button>
+      <button class="btn-secondary" onclick="closeModal('mediaModal')">취소</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var ADMIN_PW = "plastic2025";
+var isAdmin = false;
+var editingTlId = null;
+var tlCounter = 0;
+var currentAlbumStack = null;
+var currentFileData = null;
+var lbItems = [];
+var lbIndex = 0;
+var tlExpanded = false;
+var COLLAPSE_H = 720;
+
+document.addEventListener('mousemove', function(e) {
+  var g = document.getElementById('cursorGlow');
+  g.style.left = e.clientX + 'px';
+  g.style.top = e.clientY + 'px';
+});
+
+window.addEventListener('scroll', function() {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+function checkTlHeight() {
+  var container = document.getElementById('timelineContainer');
+  var btn = document.getElementById('tlMoreBtn');
+  var fade = document.getElementById('tlFade');
+  if (container.scrollHeight > COLLAPSE_H + 40) {
+    btn.style.display = 'block';
+    if (!tlExpanded) {
+      container.classList.add('collapsed');
+      fade.classList.add('show');
+    }
+  } else {
+    btn.style.display = 'none';
+    container.classList.remove('collapsed');
+    fade.classList.remove('show');
+  }
+}
+
+function toggleTl() {
+  var container = document.getElementById('timelineContainer');
+  var btn = document.getElementById('tlMoreBtn');
+  var fade = document.getElementById('tlFade');
+  tlExpanded = !tlExpanded;
+  if (tlExpanded) {
+    container.classList.remove('collapsed');
+    fade.classList.remove('show');
+    btn.textContent = '접기 ↑';
+    document.querySelectorAll('.timeline-item:not(.visible)').forEach(function(el) { observer.observe(el); });
+  } else {
+    container.classList.add('collapsed');
+    fade.classList.add('show');
+    btn.textContent = '더 보기 ↓';
+    document.getElementById('timeline').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function openAdminModal() {
+  if (isAdmin) { logoutAdmin(); return; }
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('adminError').textContent = '';
+  openModal('adminModal');
+  setTimeout(function() { document.getElementById('adminPwInput').focus(); }, 300);
+}
+function checkAdmin() {
+  if (document.getElementById('adminPwInput').value === ADMIN_PW) {
+    isAdmin = true;
+    closeModal('adminModal');
+    document.body.classList.add('admin-active');
+    document.getElementById('adminBar').classList.add('show');
+    document.getElementById('adminBtnEl').textContent = 'OFF';
+    document.querySelectorAll('[contenteditable]').forEach(function(el) { el.setAttribute('contenteditable','true'); });
+    document.querySelectorAll('.tl-date,.tl-title,.tl-desc').forEach(function(el) { el.setAttribute('contenteditable','true'); });
+  } else {
+    document.getElementById('adminError').textContent = '비밀번호가 올바르지 않습니다.';
+    document.getElementById('adminPwInput').value = '';
+  }
+}
+function logoutAdmin() {
+  isAdmin = false;
+  document.body.classList.remove('admin-active');
+  document.getElementById('adminBar').classList.remove('show');
+  document.getElementById('adminBtnEl').textContent = 'Admin';
+  document.querySelectorAll('[contenteditable]').forEach(function(el) { el.setAttribute('contenteditable','false'); });
+  document.querySelectorAll('.tl-date,.tl-title,.tl-desc').forEach(function(el) { el.setAttribute('contenteditable','false'); });
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) closeModal(m.id); });
+});
+
+function openAddMember() { if (!isAdmin) return; openModal('memberModal'); }
+function addMember() {
+  var name = document.getElementById('memberName').value.trim();
+  var role = document.getElementById('memberRole').value.trim();
+  var emoji = document.getElementById('memberEmoji').value.trim() || '👤';
+  if (!name || !role) return;
+  renderMember(name, role, emoji, '', true);
+  ['memberName','memberRole','memberEmoji'].forEach(function(id) { document.getElementById(id).value = ''; });
+  closeModal('memberModal');
+}
+function renderMember(name, role, emoji, review, save) {
+  var grid = document.getElementById('teamGrid');
+  var addBtn = grid.querySelector('.team-add-card');
+  var card = document.createElement('div');
+  card.className = 'team-card';
+  var rv = review || '<span style="opacity:.35;font-style:italic">느낀 점을 입력하세요...</span>';
+  card.innerHTML = '<div class="team-avatar">' + emoji + '</div>' +
+    '<div class="team-name">' + name + '</div>' +
+    '<div class="team-role">' + role + '</div>' +
+    '<div class="team-review" contenteditable="' + isAdmin + '">' + rv + '</div>' +
+    '<button class="delete-btn" onclick="this.parentElement.remove();saveAll()">×</button>';
+  grid.insertBefore(card, addBtn);
+  observer.observe(card);
+  setTimeout(function() { card.classList.add('visible'); }, 50);
+  if (save) saveAll();
+}
+
+function openAddTimeline() {
+  if (!isAdmin) return;
+  editingTlId = null;
+  document.getElementById('tlModalTitle').textContent = '타임라인 추가';
+  document.getElementById('tlSaveBtn').textContent = '추가';
+  ['tlDate','tlTitle','tlDesc'].forEach(function(id) { document.getElementById(id).value = ''; });
+  openModal('timelineModal');
+}
+function openEditTimeline(id) {
+  if (!isAdmin) return;
+  editingTlId = id;
+  var item = document.querySelector('.timeline-item[data-id="' + id + '"]');
+  document.getElementById('tlModalTitle').textContent = '타임라인 수정';
+  document.getElementById('tlSaveBtn').textContent = '저장';
+  document.getElementById('tlDate').value = item.querySelector('.tl-date').textContent;
+  document.getElementById('tlTitle').value = item.querySelector('.tl-title').textContent;
+  document.getElementById('tlDesc').value = item.querySelector('.tl-desc').textContent;
+  openModal('timelineModal');
+}
+function saveTimeline() {
+  var date = document.getElementById('tlDate').value.trim();
+  var title = document.getElementById('tlTitle').value.trim();
+  var desc = document.getElementById('tlDesc').value.trim();
+  if (!title) return;
+  if (editingTlId) {
+    var item = document.querySelector('.timeline-item[data-id="' + editingTlId + '"]');
+    if (item) {
+      item.querySelector('.tl-date').textContent = date;
+      item.querySelector('.tl-title').textContent = title;
+      item.querySelector('.tl-desc').textContent = desc;
+    }
+  } else {
+    renderTimeline(date || ('Step 0' + (tlCounter + 1)), title, desc, [], true);
+  }
+  closeModal('timelineModal');
+  saveAll();
+}
+function renderTimeline(date, title, desc, mediaItems, save) {
+  tlCounter++;
+  var id = 'tl-' + tlCounter;
+  var container = document.getElementById('timelineContainer');
+  var item = document.createElement('div');
+  item.className = 'timeline-item';
+  item.dataset.id = id;
+  item.innerHTML =
+    '<div class="tl-content">' +
+      '<div class="tl-date" contenteditable="' + isAdmin + '">' + date + '</div>' +
+      '<div class="tl-title" contenteditable="' + isAdmin + '">' + title + '</div>' +
+      '<div class="tl-desc" contenteditable="' + isAdmin + '">' + desc + '</div>' +
+    '</div>' +
+    '<div class="tl-dot-col"><div class="tl-dot"></div></div>' +
+    '<div class="tl-media-col">' +
+      '<div class="album-stack empty" data-id="' + id + '">' +
+        '<div class="stack-icon">🖼</div>' +
+        '<div class="stack-hint">미디어 없음</div>' +
+      '</div>' +
+      '<button class="album-add-btn" onclick="openMediaModal(\'' + id + '\')">+ 미디어 추가</button>' +
+    '</div>' +
+    '<div class="tl-item-controls">' +
+      '<button class="tl-ctrl-btn" onclick="openEditTimeline(\'' + id + '\')" title="수정">✎</button>' +
+      '<button class="tl-ctrl-btn del" onclick="removeTl(\'' + id + '\')" title="삭제">×</button>' +
+    '</div>';
+  container.appendChild(item);
+  if (mediaItems && mediaItems.length) {
+    var stack = item.querySelector('.album-stack');
+    mediaItems.forEach(function(m) { addCardToStack(stack, m.url, m.type, false); });
+    updateStack(stack);
+  }
+  observer.observe(item);
+  setTimeout(function() { item.classList.add('visible'); }, 50);
+  if (save) saveAll();
+  checkTlHeight();
+}
+function removeTl(id) {
+  var el = document.querySelector('.timeline-item[data-id="' + id + '"]');
+  if (el) el.remove();
+  saveAll();
+  checkTlHeight();
+}
+
+function openMediaModal(tlId) {
+  if (!isAdmin) return;
+  currentAlbumStack = document.querySelector('.album-stack[data-id="' + tlId + '"]');
+  currentFileData = null;
+  document.getElementById('mediaUrl').value = '';
+  document.getElementById('mediaType').value = 'image';
+  toggleMediaInput();
+  openModal('mediaModal');
+}
+function toggleMediaInput() {
+  var t = document.getElementById('mediaType').value;
+  document.getElementById('mediaUrlGroup').style.display = t === 'file' ? 'none' : 'block';
+  document.getElementById('mediaFileGroup').style.display = t === 'file' ? 'block' : 'none';
+  clearFile();
+}
+function handleFileSelect(inp) {
+  var file = inp.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    currentFileData = { dataUrl: e.target.result, type: file.type, name: file.name };
+    document.getElementById('filePreviewName').textContent = file.name;
+    document.getElementById('filePreview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+function clearFile() {
+  currentFileData = null;
+  document.getElementById('mediaFileInput').value = '';
+  document.getElementById('filePreview').classList.remove('show');
+}
+function applyMedia() {
+  var url, type;
+  var mt = document.getElementById('mediaType').value;
+  if (mt === 'file') {
+    if (!currentFileData) return;
+    url = currentFileData.dataUrl;
+    type = currentFileData.type.indexOf('pdf') !== -1 ? 'pdf' : 'image';
+  } else {
+    url = document.getElementById('mediaUrl').value.trim();
+    if (!url) return;
+    type = mt === 'video' ? 'video' : 'image';
+  }
+  if (!currentAlbumStack) return;
+  var items = currentAlbumStack.querySelectorAll('.stack-card');
+  if (items.length >= 5) { alert('한 타임라인에 최대 5개까지 추가할 수 있습니다.'); return; }
+  addCardToStack(currentAlbumStack, url, type, true);
+  closeModal('mediaModal');
+  saveAll();
+}
+function addCardToStack(stack, url, type, save) {
+  stack.classList.remove('empty');
+  var icon = stack.querySelector('.stack-icon');
+  var hint = stack.querySelector('.stack-hint');
+  if (icon) icon.remove();
+  if (hint) hint.remove();
+  var card = document.createElement('div');
+  card.className = 'stack-card';
+  card.dataset.url = url;
+  card.dataset.type = type;
+  if (type === 'pdf') {
+    card.innerHTML = '<div class="pdf-thumb"><span>📄</span><span>PDF</span></div>';
+  } else if (type === 'video') {
+    var src = url.replace('watch?v=','embed/').replace('youtu.be/','youtube.com/embed/');
+    if (src.indexOf('youtube') !== -1 || src.indexOf('youtu') !== -1) {
+      card.innerHTML = '<iframe src="' + src + '&mute=1" allowfullscreen></iframe>';
+    } else {
+      card.innerHTML = '<video src="' + url + '" muted></video>';
+    }
+  } else {
+    card.innerHTML = '<img src="' + url + '" alt="media">';
+  }
+  var del = document.createElement('button');
+  del.className = 'album-del-btn';
+  del.textContent = '×';
+  del.onclick = function(e) { e.stopPropagation(); card.remove(); updateStack(stack); saveAll(); };
+  card.appendChild(del);
+  card.addEventListener('click', function() { openLightbox(stack, card); });
+  stack.appendChild(card);
+  updateStack(stack);
+}
+function updateStack(stack) {
+  var badge = stack.querySelector('.stack-count-badge');
+  if (badge) badge.remove();
+  var cards = stack.querySelectorAll('.stack-card');
+  if (cards.length === 0) {
+    stack.classList.add('empty');
+    stack.innerHTML = '<div class="stack-icon">🖼</div><div class="stack-hint">미디어 없음</div>';
+    return;
+  }
+  if (cards.length > 1) {
+    var b = document.createElement('div');
+    b.className = 'stack-count-badge';
+    b.textContent = cards.length + '개';
+    stack.appendChild(b);
+  }
+}
+
+function openLightbox(stack, clickedCard) {
+  var cards = Array.from(stack.querySelectorAll('.stack-card'));
+  lbItems = cards.map(function(c) { return { url: c.dataset.url, type: c.dataset.type }; });
+  lbIndex = cards.indexOf(clickedCard);
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+}
+function renderLightbox() {
+  var inner = document.getElementById('lbInner');
+  inner.innerHTML = '';
+  var item = lbItems[lbIndex];
+  var el;
+  if (item.type === 'pdf') {
+    el = document.createElement('div'); el.className = 'lb-pdf';
+    el.innerHTML = '<span>📄</span><a href="' + item.url + '" target="_blank">PDF 열기 →</a>';
+  } else if (item.type === 'video') {
+    var src = item.url.replace('watch?v=','embed/').replace('youtu.be/','youtube.com/embed/');
+    if (src.indexOf('youtube') !== -1 || src.indexOf('youtu') !== -1) {
+      el = document.createElement('iframe'); el.src = src; el.allowFullscreen = true;
+    } else {
+      el = document.createElement('video'); el.src = item.url; el.controls = true; el.autoplay = true;
+    }
+  } else {
+    el = document.createElement('img'); el.src = item.url; el.alt = 'media';
+  }
+  inner.appendChild(el);
+  if (lbItems.length > 1) {
+    var prev = document.createElement('button'); prev.className = 'lb-nav lb-prev'; prev.textContent = '‹';
+    prev.onclick = function() { lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length; renderLightbox(); };
+    var next = document.createElement('button'); next.className = 'lb-nav lb-next'; next.textContent = '›';
+    next.onclick = function() { lbIndex = (lbIndex + 1) % lbItems.length; renderLightbox(); };
+    var counter = document.createElement('div'); counter.className = 'lb-counter'; counter.textContent = (lbIndex + 1) + ' / ' + lbItems.length;
+    inner.appendChild(prev); inner.appendChild(next); inner.appendChild(counter);
+  }
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lbInner').innerHTML = '';
+}
+document.getElementById('lightbox').addEventListener('click', function(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft' && lbItems.length > 1) { lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length; renderLightbox(); }
+  if (e.key === 'ArrowRight' && lbItems.length > 1) { lbIndex = (lbIndex + 1) % lbItems.length; renderLightbox(); }
+});
+
+async function saveAll() {
+  try {
+    var about = { p1: document.getElementById('about-p1').textContent, p2: document.getElementById('about-p2').textContent };
+    ['1','2','3','4'].forEach(function(n) { about['s'+n+'n'] = document.getElementById('stat-'+n+'-num').textContent; about['s'+n+'l'] = document.getElementById('stat-'+n+'-label').textContent; });
+    await window.storage.set('pp-about', JSON.stringify(about));
+    var tls = Array.from(document.querySelectorAll('.timeline-item')).map(function(t) {
+      var sc = Array.from(t.querySelectorAll('.stack-card')).map(function(c) { return { url: c.dataset.url, type: c.dataset.type }; });
+      return { date: t.querySelector('.tl-date').textContent, title: t.querySelector('.tl-title').textContent, desc: t.querySelector('.tl-desc').textContent, mediaItems: sc };
+    });
+    await window.storage.set('pp-timelines', JSON.stringify(tls));
+    var members = Array.from(document.querySelectorAll('.team-card')).map(function(c) {
+      return { name: c.querySelector('.team-name').textContent, role: c.querySelector('.team-role').textContent, emoji: c.querySelector('.team-avatar').textContent.trim(), review: c.querySelector('.team-review') ? c.querySelector('.team-review').innerHTML : '' };
+    });
+    await window.storage.set('pp-members', JSON.stringify(members));
+  } catch(e) {}
+}
+
+async function loadAll() {
+  try {
+    var aRes = await window.storage.get('pp-about');
+    if (aRes && aRes.value) {
+      var a = JSON.parse(aRes.value);
+      document.getElementById('about-p1').textContent = a.p1;
+      document.getElementById('about-p2').textContent = a.p2;
+      ['1','2','3','4'].forEach(function(n) { document.getElementById('stat-'+n+'-num').textContent = a['s'+n+'n']; document.getElementById('stat-'+n+'-label').textContent = a['s'+n+'l']; });
+    }
+  } catch(e) {}
+  var defaults = [
+    { date:'Step 01', title:'기획 및 컨셉 개발', desc:'프로젝트의 방향성과 핵심 컨셉을 설정하고, 브랜드 메시지를 어떻게 공간에 녹여낼지 논의했습니다.' },
+    { date:'Step 02', title:'디자인 스케치 & 목업', desc:'컨셉을 시각화하는 스케치 작업과 목업 제작을 통해 최종 형태를 구체화했습니다.' },
+    { date:'Step 03', title:'제작 및 설치', desc:'실제 재료를 사용한 오브제 제작과 공간 설치 작업을 진행했습니다.' },
+    { date:'Step 04', title:'최종 전시', desc:'완성된 VMD 전시의 최종 결과물을 촬영하고 기록했습니다.' }
+  ];
+  try {
+    var tRes = await window.storage.get('pp-timelines');
+    var tls = (tRes && tRes.value) ? JSON.parse(tRes.value) : defaults;
+    tls.forEach(function(t) { renderTimeline(t.date, t.title, t.desc, t.mediaItems || [], false); });
+  } catch(e) {
+    defaults.forEach(function(t) { renderTimeline(t.date, t.title, t.desc, [], false); });
+  }
+  checkTlHeight();
+  try {
+    var mRes = await window.storage.get('pp-members');
+    if (mRes && mRes.value) {
+      JSON.parse(mRes.value).forEach(function(m) { renderMember(m.name, m.role, m.emoji, m.review || '', false); });
+    }
+  } catch(e) {}
+}
+
+loadAll();
+</script>
+</body>
+</html>
